@@ -337,13 +337,16 @@
 import * as dotenv from 'dotenv'
 
 import { MongoClient } from 'mongodb';
-import express from'express';// third party package
+import express from'express';
+import { productRouter } from './routes/products.js';// third party package
  const app = express()   //assigned
+
+ dotenv.config() /// keep it in the top (other wise you get server is running on undefined port)
+
+
   const PORT=process.env.PORT;
 
-  dotenv.config()
-
-console.log(process.env)
+//console.log(process.env)
 //mongo atlas connection 
 const MONGO_URL=process.env.MONGO_URL
 
@@ -358,59 +361,19 @@ async function createConnection(){
 
 }
 
- const client=  await createConnection()
+ export const client=  await createConnection()
  //or
  //(async ()=>{const client= await createConnection()})()
 
+ app.get('/', function (req, res) {         // http method (root end point)
+    res.send('Hello World')                  // what response to be sent
+  }) 
+  
+  app.use("/products",productRouter)
 
-app.get('/', function (req, res) {         // http method (root end point)
-  res.send('Hello World')                  // what response to be sent
-}) 
-
-app.get('/products',express.json(),async(req,res)=>{
-    const {category,rating}= req.query
-    console.log(req.query,category);
-    // let filteredProducts= products;
-
-    //  if(category){
-    //     filteredProducts=filteredProducts.filter((pd)=>pd.category===category)
-    //  }
-    //  if(rating)
-    //  {
-    //     filteredProducts=filteredProducts.filter((pd)=>pd.rating== rating)
-
-    //  }
-    const result=  await client.db("b55-node").collection("products").find(req.query).toArray()
-      res.send(result)
-})
-
-app.get('/products/:id',async(req,res)=>{
-    const{id}= req.params
-    console.log(req.params,id)
-   // const product=products.find((pd)=>pd.id===id)
-   //db query to be inserted and qury is  run by node and finds in database
-   const product= await client.db("b55-node").collection('products').findOne({id:id})
-    product ? res.send(product):res.status(404).send({meassage:"product not found"})
-})
-// delete
-app.delete('/products/:id',async(req,res)=>{
-    const{id}= req.params
-    console.log(req.params,id)
-   //db query to be inserted and qury is  run by node and finds in database
-   const product= await client.db("b55-node").collection('products').deleteOne({id:id})
-    res.send(product)
-})
-
-//post
-//app.post('/products',express.json(),async(req,res)=>{
-    app.post('/products',async(req,res)=>{
-
-    const newProduct= req.body
-   //db query to be inserted and qury is  run by node and finds in database
-   const result= await client.db("b55-node").collection('products').insertMany(newProduct)
-    res.send(result)
-})
 
 app.listen(PORT,()=>console.log("server is running on PORT", PORT)) 
+
+
 
 
