@@ -30,9 +30,9 @@ const quote2 = "Live more worry less"
 //Task-2
 //node fs.js 20 => 20 files to be created || note-1.txt..note-20.txt
 
-const [, , noOfFiles] = process.argv
+// const [, , noOfFiles] = process.argv
 
-console.log(noOfFiles)
+// console.log(noOfFiles)
 
 // for (let i = 1; i <= noOfFiles; i++) {
 //     fs.writeFile(`./backup/note-${i}.txt`, quote2, (err) => {
